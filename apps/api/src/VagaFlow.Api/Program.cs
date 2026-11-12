@@ -1,6 +1,16 @@
+using Microsoft.EntityFrameworkCore;
 using VagaFlow.Api;
+using VagaFlow.Api.Persistence;
 
 var builder = WebApplication.CreateBuilder(args);
+// Database is optional for /health and basic tests. When configured, routes may
+// resolve VagaFlowDbContext. Migrations are explicit (never run at startup).
+var connectionString = builder.Configuration.GetConnectionString("VagaFlow");
+if (!string.IsNullOrWhiteSpace(connectionString))
+{
+    builder.Services.AddDbContext<VagaFlowDbContext>(options => options.UseNpgsql(connectionString));
+}
+
 var app = builder.Build();
 
 // Endpoint intentionally independent of database/external services.

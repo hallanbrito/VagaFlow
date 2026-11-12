@@ -6,6 +6,8 @@ on:
       - 'apps/api/**'
       - '.github/workflows/api-ci.yml'
       - 'scripts/smoke-api.sh'
+      - 'infra/**'
+      - '.config/dotnet-tools.json'
   push:
     branches: [main]
     paths:
@@ -19,6 +21,22 @@ permissions:
 jobs:
   api-test:
     runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:17-alpine
+        env:
+          POSTGRES_DB: vagaflow
+          POSTGRES_USER: vagaflow
+          POSTGRES_PASSWORD: ci_ephemeral_local_only
+        ports:
+          - 55432:5432
+        options: >-
+          --health-cmd "pg_isready -U vagaflow -d vagaflow"
+          --health-interval 5s
+          --health-timeout 3s
+          --health-retries 20
+    env:
+      VAGAFLOW_TEST_DB_CONNECTION: Host=127.0.0.1;Port=55432;Database=vagaflow;Username=vagaflow;Password=ci_ephemeral_local_only
     steps:
       - uses: actions/checkout@v4
       - name: Set up .NET 10
