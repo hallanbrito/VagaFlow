@@ -1,0 +1,39 @@
+# Segredos e configurações locais
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+secrets/
+**/secrets/
+# Dados pessoais e anexos: currículos e laudos jamais no Git
+*.pdf
+*.doc
+*.docx
+private/
+data/
+uploads/
+backups/
+*.sqlite
+*.sqlite3
+*.db
+*.dump
+*.sql.gz
+# JavaScript / Angular
+node_modules/
+dist/
+.angular/
+coverage/
+# .NET
+**/bin/
+**/obj/
+TestResults/
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+# IDE / OS
+.idea/
+.vscode/*
+!.vscode/extensions.json
+.DS_Store
