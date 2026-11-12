@@ -1,0 +1,23 @@
+<a class="skip-link" href="#conteudo">Pular para o conteúdo</a>
+<header class="topbar">
+  <div class="topbar-inner">
+    <a routerLink="/" class="brand" aria-label="VagaFlow — página inicial">
+      <span class="brand-symbol" aria-hidden="true">V</span>
+      <span>Vaga<span class="brand-highlight">Flow</span></span>
+    </a>
+    <nav aria-label="Navegação principal" class="navigation">
+      <a routerLink="/" routerLinkActive="is-active" [routerLinkActiveOptions]="{ exact: true }">Início</a>
+      <a routerLink="/perfil" routerLinkActive="is-active">Meu perfil</a>
+      <a routerLink="/curriculos" routerLinkActive="is-active">Currículos</a>
+      <a routerLink="/radar" routerLinkActive="is-active">Radar</a>
+      <a routerLink="/candidaturas" routerLinkActive="is-active">Candidaturas</a>
+    </nav>
+  </div>
+</header>
+<router-outlet />
+<footer class="footer">
+  <div class="footer-inner">
+    <span>VagaFlow · MVP 0.1-alpha</span>
+    <span>Dados reais e candidaturas somente com sua confirmação.</span>
+  </div>
+</footer>
