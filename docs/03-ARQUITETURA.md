@@ -166,28 +166,30 @@ POST/PATCH exigem validação de DTO e nunca enviam dados a portais de terceiros
 ## 9. Organização inicial do repositório
 
 ```text
-vagaflow/
+VagaFlow/
 ├── README.md
 ├── docs/
 │   ├── 01-VISAO-DO-PRODUTO.md
 │   ├── 02-ESCOPO-MVP-0.1.md
 │   ├── 03-ARQUITETURA.md
-│   └── 04-BACKLOG-INICIAL.md
+│   ├── 04-BACKLOG-INICIAL.md
+│   └── decisions/
 ├── planning/
 │   └── backlog.csv
-├── backend/
-│   ├── src/VagaFlow.Api/
-│   ├── src/VagaFlow.Domain/
-│   ├── src/VagaFlow.Application/
-│   ├── src/VagaFlow.Infrastructure/
-│   └── tests/VagaFlow.Tests/
-├── frontend/
-│   └── vagaflow-web/
-├── infrastructure/
-│   └── compose.yml
-├── .env.example
+├── apps/
+│   ├── api/
+│   │   ├── src/VagaFlow.Api/
+│   │   └── tests/VagaFlow.Api.Tests/
+│   └── web/
+│       ├── src/
+│       └── public/
+├── infra/  # futuro compose.yml — VF-004
+├── scripts/ # smoke tests
+├── .editorconfig
 └── .gitignore
 ```
+
+**Estrutura progressiva:** novos projetos de domínio, aplicação e infraestrutura .NET serão criados apenas quando os módulos justificarem a separação. Não criar diretórios vazios sem código para mantê-los.
 
 ## 10. Segurança, privacidade e testes
 
