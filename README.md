@@ -12,9 +12,15 @@
 4. [`docs/04-BACKLOG-INICIAL.md`](docs/04-BACKLOG-INICIAL.md) — 24 issues propostas com prioridades, dependências e aceite.
 5. [`planning/backlog.csv`](planning/backlog.csv) — backlog editável em planilha ou GitHub Projects (ajustes de importação podem ser necessários).
 
+## Primeira entrega utilizável — 0.1-alpha
+
+Cadastrar perfil mínimo → colar uma vaga real e seu link → visualizar no radar → abrir o portal e registrar resultado. O gerador de PDF e as integrações automáticas não bloqueiam essa primeira entrega.
+
 ## Resultado esperado do MVP 0.1
 
 **Perfil e currículos → Radar real com fontes rastreáveis → Match explicável → Link de candidatura → Registro manual do envio.**
+
+A revisão de escopo registrada em `docs/decisions/0003-usuario-zero-velocidade-e-pdf.md` detalha importação rápida de vagas locais, fallback de currículo e avaliação de QuestPDF.
 
 ## Primeiros passos
 
