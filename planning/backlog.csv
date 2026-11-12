@@ -1,0 +1,25 @@
+index,ID,Épico,Título,Prioridade,Dependências,Tamanho,Critério de aceite,Status
+0,VF-001,Fundação,"Inicializar monorepo, README e ADRs",P0,-,S,Estrutura documentada; .gitignore bloqueia .env/PDFs/dumps; build de exemplo reproduzível,Proposta
+1,VF-002,Fundação,Criar backend .NET 10 e endpoint /health,P0,VF-001,S,API sobe em loopback; /health responde 200; teste básico verde,Proposta
+2,VF-003,Fundação,Criar Angular shell com navegação acessível,P0,VF-001,S,"Rotas Perfil, Currículos, Radar e Candidaturas; navegação por teclado",Proposta
+3,VF-004,Fundação,Configurar PostgreSQL e EF Core Migrations,P0,VF-002,M,Compose local inicia banco; migrations aplicáveis e reversíveis,Proposta
+4,VF-005,Perfil,"Modelar perfil mestre, experiências, formação e skills",P0,VF-004,M,Entidades e DTOs com validação; CRUD testado; não incluir dados médicos,Proposta
+5,VF-006,Perfil,Criar formulário de perfil e preferências do usuário zero,P0,VF-003;VF-005,M,Áreas/localidades/modalidades/pretensão editáveis; persistência confiável,Proposta
+6,VF-007,Currículos,Cadastrar quatro variantes e anexar PDFs existentes,P0,VF-005;VF-003,M,4 variantes com metadados; anexo validado; escolha Geral/PcD explícita,Proposta
+7,VF-008,Currículos,Criar template ATS HTML com geração PDF,P0,VF-005;VF-007,M,PDF textual com links e conteúdo confirmado; prévia e download,Proposta
+8,VF-009,Vagas,"Modelar fontes, vagas, datas e estados de verificação",P0,VF-004,M,published_at separado de first_seen_at; empresa+URL obrigatórias para elegibilidade,Proposta
+9,VF-010,Vagas,Criar importação manual de vaga e validação de URL,P0,VF-009,S,Usuário informa empresa/cargo/URL; nenhum fetch arbitrário; rejeita inválidos,Proposta
+10,VF-011,Vagas,Implementar normalização e desduplicação,P0,VF-009,M,Fonte+ID ou URL canônica únicas; testes de duplicidade,Proposta
+11,VF-012,Vagas,Adicionar adaptador Greenhouse e sync por empresa,P0,VF-009;VF-011,M,"GET oficial por board token configurado, backoff/timeouts, import real demonstrado",Proposta
+12,VF-013,Vagas,Implementar lista Radar com filtros e revisão,P0,VF-003;VF-010;VF-011,M,Teresina/remoto BR/áreas/01-11; datas ausentes em revisão; URL externa funcional,Proposta
+13,VF-014,Matching,Criar política de elegibilidade e testes,P0,VF-005;VF-009,M,3 estados; nenhuma data ou modalidade inventada; cenários do usuário zero cobertos,Proposta
+14,VF-015,Matching,Implementar score determinístico explicável,P0,VF-014,M,Met/gap/unknown e cobertura exibidos; nota não interpretada como chance,Proposta
+15,VF-016,Matching,Sugerir variante de currículo por área e política PcD,P0,VF-007;VF-015,S,Exclusiva PcD sugere PcD; geral sugere Geral; usuário pode trocar,Proposta
+16,VF-017,Candidaturas,"Modelar candidatura, status e antirrepetição",P0,VF-009;VF-005,M,Status enviada só manualmente; unique perfil/vaga; histórico de datas,Proposta
+17,VF-018,Candidaturas,Criar painel com atualização de status,P0,VF-003;VF-017,M,Lista salvas/enviadas/entrevista; alerta de duplicatas; próximo passo visível,Proposta
+18,VF-019,Qualidade,Escrever testes E2E da jornada usuário zero,P0,VF-006;VF-008;VF-013;VF-016;VF-018,M,Perfil -> PDF -> radar -> match -> link -> status registrado em cenário sintético,Proposta
+19,VF-020,Qualidade,"Auditar segurança local, documentação e release 0.1",P0,VF-019;VF-012,M,"Sem PII/versionamento, backend loopback, README reproduzível, checklist DoD completo",Proposta
+20,VF-021,Fontes,Avaliar e implementar adaptador Lever,P1,VF-012,M,Termos revisados; empresa configurável; contrato normalizado e testado,Proposta
+21,VF-022,Produto,Instrumentar feedback de qualidade do resultado,P1,VF-015;VF-018,S,Usuário marca recomendação útil/inútil com comentário; sem telemetria oculta,Proposta
+22,VF-023,Pesquisa,Pesquisar novas fontes brasileiras permitidas,P1,VF-012,S,Matriz cobertura/permissões/custos; sem integração não autorizada,Proposta
+23,VF-024,Produto,Planejar beta multiusuário e LGPD operacional,P2,VF-020,L,"Threat model, autenticação, isolamento, exclusão/exportação e base legal revisados",Proposta
