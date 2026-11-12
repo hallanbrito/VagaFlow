@@ -9,10 +9,16 @@ var builder = WebApplication.CreateBuilder(args);
 // Database is optional for /health and basic tests. When configured, routes may
 // resolve VagaFlowDbContext. Migrations are explicit (never run at startup).
 var connectionString = builder.Configuration.GetConnectionString("VagaFlow");
-if (!string.IsNullOrWhiteSpace(connectionString))
+// Register the DbContext type even when no connection string is present,
+// so ASP.NET Minimal APIs can resolve endpoint dependency metadata. Database
+// endpoints still require a configured connection at request time.
+builder.Services.AddDbContext<VagaFlowDbContext>(options =>
 {
-    builder.Services.AddDbContext<VagaFlowDbContext>(options => options.UseNpgsql(connectionString));
-}
+    if (!string.IsNullOrWhiteSpace(connectionString))
+    {
+        options.UseNpgsql(connectionString);
+    }
+});
 
 // Stable camelCase enum values for the Angular API client. Numeric enum values
 // are rejected so future enum reordering cannot silently misclassify a vacancy.
