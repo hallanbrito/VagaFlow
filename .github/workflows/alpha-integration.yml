@@ -1,0 +1,106 @@
+name: Alpha Integration Smoke
+
+on:
+  push:
+    branches:
+      - integration/vf-01-alpha
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  alpha:
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:17-alpine
+        env:
+          POSTGRES_DB: vagaflow
+          POSTGRES_USER: vagaflow
+          POSTGRES_PASSWORD: ci_ephemeral_local_only
+        ports:
+          - 55432:5432
+        options: >-
+          --health-cmd "pg_isready -U vagaflow -d vagaflow"
+          --health-interval 5s
+          --health-timeout 3s
+          --health-retries 20
+    env:
+      ConnectionStrings__VagaFlow: Host=127.0.0.1;Port=55432;Database=vagaflow;Username=vagaflow;Password=ci_ephemeral_local_only
+      VAGAFLOW_TEST_DB_CONNECTION: Host=127.0.0.1;Port=55432;Database=vagaflow;Username=vagaflow;Password=ci_ephemeral_local_only
+      ASPNETCORE_ENVIRONMENT: Development
+
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '10.0.x'
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+
+      - name: Testes de API e PostgreSQL
+        run: |
+          dotnet restore apps/api/tests/VagaFlow.Api.Tests/VagaFlow.Api.Tests.csproj
+          dotnet test apps/api/tests/VagaFlow.Api.Tests/VagaFlow.Api.Tests.csproj --configuration Release --no-restore
+
+      - name: Verificar migrações explícitas
+        run: |
+          dotnet tool restore
+          dotnet ef database update \
+            --project apps/api/src/VagaFlow.Api/VagaFlow.Api.csproj \
+            --startup-project apps/api/src/VagaFlow.Api/VagaFlow.Api.csproj \
+            --context VagaFlowDbContext
+
+      - name: Testes e build Angular
+        working-directory: apps/web
+        run: |
+          npm install --no-audit --no-fund
+          npm test
+          npm run build
+
+      - name: Smoke HTTP completo (somente dados sintéticos)
+        shell: bash
+        run: |
+          set -euo pipefail
+          dotnet run --no-build --no-launch-profile --configuration Release \
+            --project apps/api/src/VagaFlow.Api/VagaFlow.Api.csproj \
+            --urls http://127.0.0.1:5050 > /tmp/vagaflow-api.log 2>&1 &
+          for i in $(seq 1 25); do
+            if curl --silent --fail http://127.0.0.1:5050/health > /dev/null; then
+              break
+            fi
+            sleep 1
+          done
+          curl --fail --silent --show-error http://127.0.0.1:5050/health
+          python3 - <<'PY'
+          import json
+          import urllib.request
+          import urllib.error
+          import os
+
+          url = 'http://127.0.0.1:5050/api/v1/jobs/manual'
+          body = json.dumps({
+              'company': 'Empresa Sintetica CI',
+              'title': 'Analista de Testes',
+              'url': 'https://careers.example.org/jobs/alpha-ci-'+os.getenv('GITHUB_RUN_ID', 'test'),
+              'sourcePortal': 'CI',
+              'description': 'Teste integrado; não é vaga real.',
+              'area': 'it',
+              'workArrangement': 'remote'
+          }).encode('utf-8')
+          request = urllib.request.Request(
+              url, data=body,
+              headers={'Content-Type': 'application/json'},
+              method='POST')
+          with urllib.request.urlopen(request, timeout=10) as response:
+              assert response.status == 201, response.status
+              created = json.load(response)
+          assert created['publishedAtUtc'] is None
+          assert created['verificationState'] == 'pendingReview'
+          with urllib.request.urlopen('http://127.0.0.1:5050/api/v1/jobs', timeout=10) as response:
+              jobs = json.load(response)
+          assert any(job['id'] == created['id'] for job in jobs)
+          print('Alpha smoke OK: health + POST vaga + GET Radar + data desconhecida')
+          PY
