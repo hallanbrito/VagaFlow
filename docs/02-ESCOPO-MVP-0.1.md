@@ -14,14 +14,14 @@ O usuário zero deve conseguir: (a) manter um perfil mestre verdadeiro; (b) gera
 ### A. Perfil e currículos
 
 - CRUD de perfil com experiência, formação, projetos, habilidades, preferências, localização e remuneração de referência.
-- Cadastro das quatro variantes de currículo; associação com `area = TI | LOGISTICA` e `publico = GERAL | PCD`.
+- Cadastro das quatro variantes de currículo; associação inicial com `trilha_curriculo = TI | LOGISTICA` e `publico = GERAL | PCD`; a **área da vaga** aceita também `ADMINISTRACAO` e `ATENDIMENTO`, sem forçar o candidato a um currículo inadequado.
 - Anexar PDFs existentes **sem extração automática** no 0.1; conteúdo estruturado revisado manualmente.
-- Gerar PDF ATS simples a partir do perfil mestre com HTML/CSS + renderização; links funcionais, texto selecionável, seções sem colunas complexas.
+- Gerar PDF ATS simples a partir do perfil mestre com renderizador .NET (QuestPDF como candidato preferencial, sujeito à verificação da licença e prova de conceito); links funcionais, texto selecionável, seções sem colunas complexas.
 - Pré-visualização e confirmação dos fatos antes de exportar; controles explícitos de inclusão de informações PcD.
 
 ### B. Fontes e vagas
 
-- Importação manual de vaga por formulário: link HTTPS, empresa, cargo, localidade, modalidade, descrição, fonte e data publicada (quando comprovada).
+- Importação manual de vaga por formulário e **cola rápida de texto bruto**, com link HTTPS, empresa, cargo, localidade, modalidade, descrição, fonte e data publicada (quando comprovada). O sistema pode sugerir campos a partir do texto colado, mas **exige conferência antes de salvar**; nunca presume a data de publicação.
 - Ao menos **um adaptador funcional** de leitura para vagas publicadas (Greenhouse Job Board API como primeira opção); Lever como próximo adaptador dentro do backlog P1 se aprovado.
 - Configurar fontes por empresa (`board_token` / identificador) e não prometer busca global.
 - Normalização para um contrato único; desduplicação por `(fonte, id externo)` e por URL canônica quando possível.
@@ -113,3 +113,10 @@ Todos os itens a seguir precisam estar demonstráveis, não apenas documentados:
 - **Site de carreira público ≠ permissão irrestrita de scraping**.
 
 ---
+
+## Ajustes de validação para o usuário zero (12/11/2026)
+
+- **Marco `0.1-alpha` (primeiro valor):** perfil mínimo, preferência de busca, cadastro rápido de vaga por texto/URL, Radar filtrado e links originais; nenhuma dependência de Greenhouse ou de geração PDF. Os quatro currículos já existentes podem ser utilizados manualmente até VF-007.
+- **`0.1` completo:** acrescenta quatro anexos, matching e recomendação de currículo, painel e testes; VF-008 (exportação PDF) e VF-012 (Greenhouse) continuam no backlog do marco final, sem impedir uso antecipado.
+- **Administração e Atendimento:** não são sinônimos de Logística. Se a vaga tiver afinidade real com experiências operacionais/administrativas e não existir variante específica, propor a variante Logística **com aviso de fallback e confirmação humana**. Quando a aderência não estiver comprovada, mostrar `currículo a escolher` em vez de selecionar automaticamente.
+- **PcD:** versões PcD somente com escolha explícita do candidato, especialmente para processos afirmativos. O currículo Geral permanece padrão em vagas comuns.
