@@ -1,7 +1,9 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.TestHost;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.AspNetCore.Mvc.Testing;
-using Microsoft.Extensions.Configuration;
 using System.Net;
 using System.Net.Http.Json;
 using System.Text.Json;
@@ -107,11 +109,14 @@ public sealed class DatabaseIntegrationTests
         }
 
         using var factory = new WebApplicationFactory<Program>().WithWebHostBuilder(builder =>
-            builder.ConfigureAppConfiguration((_, config) =>
-                config.AddInMemoryCollection(new Dictionary<string, string?>
-                {
-                    ["ConnectionStrings:VagaFlow"] = connectionString
-                })));
+            builder.ConfigureTestServices(services =>
+            {
+                // Program reads configuration before ConfigureAppConfiguration runs in
+                // WebApplicationFactory; override the DbContext options explicitly.
+                services.RemoveAll<VagaFlowDbContext>();
+                services.RemoveAll<DbContextOptions<VagaFlowDbContext>>();
+                services.AddDbContext<VagaFlowDbContext>(options => options.UseNpgsql(connectionString));
+            }));
         using var client = factory.CreateClient();
 
         var canonicalUrl = $"https://careers.example.org/jobs/{Guid.NewGuid():N}";
