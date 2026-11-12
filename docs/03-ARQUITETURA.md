@@ -13,7 +13,7 @@
 | ADR-004 | **Sem IA obrigatória no 0.1** | Custo R$ 0 de inferência e maior explicabilidade | Matching determinístico versionado |
 | ADR-005 | **API oficiais + importação manual** | Evita depender de scraping indiscriminado | Cobertura por empresa, não global |
 | ADR-006 | **Local-first single-user** | Usuário zero começa imediatamente | Não publicar na Internet sem autenticação e revisão de segurança |
-| ADR-007 | PDF via template HTML/CSS renderizado por Chromium | Texto ATS selecionável e links clicáveis | Dependência de navegador headless no processo de geração |
+| ADR-007 | Gerador PDF .NET (preferência QuestPDF, sujeito a licença e spike de ATS) | Texto ATS selecionável e links clicáveis | Evitar navegador headless; confirmar licença e qualidade do PDF |
 
 ## 2. Visão C4 simplificada
 
@@ -43,7 +43,7 @@ flowchart TD
 
 **Profiles:** dados verificados, interesses, formação, experiências, skills e preferências; regras de confirmação.
 
-**Resumes:** versões de currículo, associação com perfil, renderização HTML→PDF, anexos PDF originais e histórico de exportações. Variantes Geral/PcD são selecionadas por política explícita.
+**Resumes:** versões de currículo, associação com perfil, geração de PDF a partir de dados estruturados, anexos PDF originais e histórico de exportações. Variantes Geral/PcD são selecionadas por política explícita.
 
 **Sources & Jobs:** cadastro de fontes e empresas, adaptadores, ingestão, normalização, deduplicação, recência e verificação.
 
@@ -210,3 +210,19 @@ vagaflow/
 > Esta documentação é plano de engenharia; a avaliação de termos de uso específicos de cada fonte deve ser repetida antes de ativar um novo adaptador.
 
 ---
+
+## ADR complementar — redução de tempo até o primeiro uso
+
+A revisão de 12/11/2026 registra a **primeira entrega operável `0.1-alpha`** como um recorte vertical: importar vaga local manualmente (incluindo texto colado) → exibir origem e filtros → abrir candidatura e marcar status manualmente. Não exige gerador de PDF ou adaptador Greenhouse.
+
+### Modelo de áreas e fallback de currículo
+
+- `Job.area`: `TI`, `LOGISTICA`, `ADMINISTRACAO`, `ATENDIMENTO` ou `OUTRA` (catálogo extensível).
+- `ResumeVersion.trilha`: `TI` ou `LOGISTICA` inicialmente; `audience`: `GERAL` ou `PCD`.
+- Se `Job.area` é `TI` ou `LOGISTICA`, sugerir apenas variante compatível após verificar requisitos.
+- Se `Job.area` é `ADMINISTRACAO` ou `ATENDIMENTO`, oferecer sugestão de **Logística** somente quando habilidades/experiências transferíveis justificarem, rotulando `fallback: requer revisão`; senão, não fazer sugestão automática.
+- Variante PcD **não é ativada por default**: exibir escolha humana, distinguindo vaga exclusiva/afirmativa de vaga comum que apenas aceita PcD.
+
+### PDF ATS
+
+Preferir uma prova de conceito com **QuestPDF**, comparando extração do texto, links, ordenação de leitura e acessibilidade ao PDF de referência. O QuestPDF executa no processo .NET sem Chromium. A Community License vigente possui regras de elegibilidade para indivíduos/projetos, inclusive comerciais, mas **é source-available, não uma licença open source OSI**; revisar antes da distribuição. Referências: https://www.questpdf.com/license/community.html e https://www.questpdf.com/license/guide.html.
