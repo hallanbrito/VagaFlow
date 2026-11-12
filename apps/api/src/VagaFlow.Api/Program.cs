@@ -12,4 +12,4 @@ app.MapGet("/health", () => Results.Ok(new HealthStatus("healthy", "VagaFlow.Api
 app.Run();
 
 // Public for WebApplicationFactory integration tests.
-public partial class Program;
+public partial class Program { }
