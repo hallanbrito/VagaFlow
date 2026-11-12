@@ -11,7 +11,7 @@
 
 ## Ordem de execução recomendada
 
-### S0 — Fundação & fluxo mínimo
+### S0 — Fundação & fluxo mínimo `0.1-alpha`
 `VF-001`, `VF-002`, `VF-003`, `VF-004`, `VF-005`, `VF-006`, `VF-009`, `VF-010`, `VF-013`
 
 ### S1 — Currículos e matching
@@ -37,9 +37,9 @@
 | VF-005 | P0 | Perfil | Modelar perfil mestre, experiências, formação e skills | VF-004 | M |
 | VF-006 | P0 | Perfil | Criar formulário de perfil e preferências do usuário zero | VF-003;VF-005 | M |
 | VF-007 | P0 | Currículos | Cadastrar quatro variantes e anexar PDFs existentes | VF-005;VF-003 | M |
-| VF-008 | P0 | Currículos | Criar template ATS HTML com geração PDF | VF-005;VF-007 | M |
+| VF-008 | P0 | Currículos | Criar template ATS em .NET com geração PDF (avaliar QuestPDF) | VF-005;VF-007 | M |
 | VF-009 | P0 | Vagas | Modelar fontes, vagas, datas e estados de verificação | VF-004 | M |
-| VF-010 | P0 | Vagas | Criar importação manual de vaga e validação de URL | VF-009 | S |
+| VF-010 | P0 | Vagas | Criar importação manual rápida (URL + texto bruto) e validação | VF-009 | S |
 | VF-011 | P0 | Vagas | Implementar normalização e desduplicação | VF-009 | M |
 | VF-012 | P0 | Vagas | Adicionar adaptador Greenhouse e sync por empresa | VF-009;VF-011 | M |
 | VF-013 | P0 | Vagas | Implementar lista Radar com filtros e revisão | VF-003;VF-010;VF-011 | M |
@@ -187,3 +187,17 @@
 - Não transformar o score em estimativa de aprovação; exibir razão e cobertura da evidência.
 - Não bloquear o radar por integração de IA, contas pagas ou parser complexo de PDF.
 - Não aceitar dados sensíveis em fixtures versionadas.
+
+## Ordem revista após revisão do usuário zero — 12/11/2026
+
+**`0.1-alpha` (uso diário o quanto antes):** VF-001 → VF-002/VF-003 → VF-004 → VF-009/VF-005 → VF-010 (colagem rápida) → VF-013 (Radar) → VF-017/VF-018 (histórico). VF-006 pode evoluir em paralelo como formulário simples.
+
+**Depois do primeiro uso real:** VF-007 (anexar quatro currículos), VF-014/VF-015/VF-016 (elegibilidade, score, fallback de currículo), VF-011 (deduplicação robusta), VF-008 (spike QuestPDF e PDF ATS), VF-012 (Greenhouse). As dependências internas continuam obrigatórias; a sequência acima indica **valor**, não substitui o grafo de dependências.
+
+**Regra para VF-010:** aceitar colar descrição bruta e link; sugerir dados sem gravar valores inferidos como fatos até a confirmação do usuário; deixar empresa e URL obrigatórias para vaga recomendada.
+
+**Regra para VF-016:** áreas ADMINISTRACAO e ATENDIMENTO não equivalem automaticamente a LOGISTICA. Se houver evidência de habilidades transferíveis, indicar variante de logística como opção sujeita à aprovação; sem evidência, exigir escolha manual; PcD depende sempre de seleção explícita.
+
+**Regra para VF-008:** avaliar QuestPDF sob a licença vigente antes de incorporar ao produto e testar PDF extraível, links e ordem de leitura; não tornar o radar dependente desse recurso.
+
+**Regra para VF-012:** Greenhouse é complementar ao mercado local; não atrasar `0.1-alpha` por falta de vagas de Teresina na fonte.
