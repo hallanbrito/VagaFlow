@@ -1,6 +1,6 @@
 # VagaFlow API — VF-002
 
-API minimal em **ASP.NET Core / .NET 10**, executada localmente. O endpoint `GET /health` está implementado; currículos, vagas e persistência ficam para issues seguintes.
+API minimal em **ASP.NET Core / .NET 10**, executada localmente. O endpoint `GET /health` está implementado; VF-004 adiciona infraestrutura PostgreSQL, EF Core e uma migração técnica de teste. As entidades de vagas e candidatos ainda não existem.
 
 ## Pré-requisitos
 
@@ -36,6 +36,12 @@ Resposta esperada (`HTTP 200`):
 
 ## Próximas issues
 
-- VF-004: banco PostgreSQL + EF Core
+- VF-004: PostgreSQL, EF Core, migração inicial e teste de persistência (branch de implementação)
 - VF-005: perfil mestre
 - VF-009/010: vagas e importação rápida
+
+## Persistência PostgreSQL (VF-004)
+
+Siga [infra/README.md](../../../infra/README.md) para iniciar o banco, configurar `ConnectionStrings__VagaFlow`, aplicar e reverter migrações. A API não roda migrações automaticamente; `/health` funciona sem banco e não afirma que o banco está pronto.
+
+No CI, `DatabaseIntegrationTests` recebe `VAGAFLOW_TEST_DB_CONNECTION` apontando a um serviço PostgreSQL descartável e valida migração, gravação e leitura. Sem essa variável, o teste de banco é ignorado para não exigir Docker no desenvolvimento do endpoint `/health`.
