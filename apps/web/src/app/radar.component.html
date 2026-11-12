@@ -1,0 +1,170 @@
+<main id="conteudo" class="content radar-page" aria-labelledby="radar-title">
+  <header class="radar-header">
+    <div>
+      <span class="eyebrow">MVP 0.1-alpha · Usuário zero</span>
+      <h1 id="radar-title">Radar de <span>oportunidades</span></h1>
+      <p>Guarde vagas com empresa e link original. Cada registro começa em revisão e <strong>não representa uma candidatura enviada</strong>.</p>
+    </div>
+    <button type="button" class="btn btn-outline" (click)="loadJobs()" [disabled]="loading()">Atualizar lista</button>
+  </header>
+
+  @if (errorMessage()) {
+    <div class="radar-alert error" role="alert">{{ errorMessage() }}</div>
+  }
+  @if (successMessage()) {
+    <div class="radar-alert success" role="status">{{ successMessage() }}</div>
+  }
+
+  <div class="radar-layout">
+    <section class="radar-form-card" aria-labelledby="import-title">
+      <span class="eyebrow">Registro manual</span>
+      <h2 id="import-title">Adicionar vaga</h2>
+      <p class="help-text">Cole os dados do anúncio. O VagaFlow não acessa o site automaticamente nem verifica se a vaga está aberta.</p>
+      <form #jobForm="ngForm" (ngSubmit)="save()">
+        <div class="field">
+          <label for="company">Empresa <span aria-hidden="true">*</span></label>
+          <input id="company" name="company" type="text" [(ngModel)]="draft.company" required maxlength="160" autocomplete="organization" placeholder="Nome real da empresa">
+        </div>
+        <div class="field">
+          <label for="title">Cargo <span aria-hidden="true">*</span></label>
+          <input id="title" name="title" type="text" [(ngModel)]="draft.title" required maxlength="180" placeholder="Ex.: Assistente de Logística">
+        </div>
+        <div class="field">
+          <label for="url">Link original HTTPS <span aria-hidden="true">*</span></label>
+          <input id="url" name="url" type="url" [(ngModel)]="draft.url" required pattern="https://.+" maxlength="2048" placeholder="https://empresa.com/carreiras/vaga">
+        </div>
+        <div class="field">
+          <label for="source">Portal / fonte</label>
+          <input id="source" name="sourcePortal" type="text" [(ngModel)]="draft.sourcePortal" maxlength="120" placeholder="Ex.: site de carreiras">
+        </div>
+        <div class="field">
+          <label for="description">Descrição colada do anúncio</label>
+          <textarea id="description" name="description" rows="5" [(ngModel)]="draft.description" maxlength="20000" placeholder="Cole aqui os requisitos e benefícios informados no anúncio."></textarea>
+        </div>
+        <div class="two-fields">
+          <div class="field">
+            <label for="area">Área</label>
+            <select id="area" name="area" [(ngModel)]="draft.area">
+              <option value="it">Tecnologia</option>
+              <option value="logistics">Logística</option>
+              <option value="administration">Administração</option>
+              <option value="customerService">Atendimento / Call Center</option>
+              <option value="other">Outra</option>
+            </select>
+          </div>
+          <div class="field">
+            <label for="arrangement">Modalidade</label>
+            <select id="arrangement" name="workArrangement" [(ngModel)]="draft.workArrangement">
+              <option value="unknown">Não informada</option>
+              <option value="onSite">Presencial</option>
+              <option value="hybrid">Híbrido</option>
+              <option value="remote">Remoto</option>
+            </select>
+          </div>
+          <div class="field">
+            <label for="city">Cidade</label>
+            <input id="city" name="city" type="text" [(ngModel)]="draft.city" maxlength="120" placeholder="Teresina">
+          </div>
+          <div class="field">
+            <label for="state">UF</label>
+            <input id="state" name="state" type="text" [(ngModel)]="draft.state" maxlength="2" placeholder="PI">
+          </div>
+        </div>
+        <div class="field">
+          <label for="publishedDate">Data de publicação (se comprovada)</label>
+          <input id="publishedDate" name="publishedDate" type="date" [(ngModel)]="draft.publicationDate" [required]="draft.publicationDateVerified">
+        </div>
+        <label class="check-field" for="publicationDateVerified">
+          <input id="publicationDateVerified" name="publicationDateVerified" type="checkbox" [(ngModel)]="draft.publicationDateVerified">
+          <span>Conferi essa data no anúncio original.</span>
+        </label>
+        <p class="help-text">Sem confirmação, a data publicada permanecerá desconhecida. A data do cadastro nunca substitui a publicação.</p>
+        <button class="btn btn-primary submit-button" type="submit" [disabled]="saving() || jobForm.invalid">
+          {{ saving() ? 'Salvando…' : 'Salvar vaga para revisão' }}
+        </button>
+      </form>
+    </section>
+
+    <section class="radar-results" aria-labelledby="results-title">
+      <div class="result-heading">
+        <div>
+          <span class="eyebrow">Sua lista local</span>
+          <h2 id="results-title">Vagas cadastradas <span class="result-count">{{ filteredJobs().length }}</span></h2>
+        </div>
+      </div>
+
+      <div class="radar-filters" aria-label="Filtros de vagas">
+        <div class="field">
+          <label for="search">Buscar por cargo ou empresa</label>
+          <input id="search" name="search" type="search" [ngModel]="search()" (ngModelChange)="search.set($event)" placeholder="Ex.: Técnico de TI">
+        </div>
+        <div class="two-fields">
+          <div class="field">
+            <label for="areaFilter">Área</label>
+            <select id="areaFilter" name="areaFilter" [ngModel]="areaFilter()" (ngModelChange)="areaFilter.set($event)">
+              <option value="">Todas</option>
+              <option value="it">Tecnologia</option>
+              <option value="logistics">Logística</option>
+              <option value="administration">Administração</option>
+              <option value="customerService">Atendimento</option>
+              <option value="other">Outras</option>
+            </select>
+          </div>
+          <div class="field">
+            <label for="regionFilter">Localidade</label>
+            <select id="regionFilter" name="regionFilter" [ngModel]="regionFilter()" (ngModelChange)="regionFilter.set($event)">
+              <option value="all">Todas</option>
+              <option value="teresina">Teresina / PI</option>
+              <option value="remote">Remoto (verificar Brasil)</option>
+            </select>
+          </div>
+        </div>
+        <div class="field">
+          <label for="dateFilter">Publicação</label>
+          <select id="dateFilter" name="dateFilter" [ngModel]="dateFilter()" (ngModelChange)="dateFilter.set($event)">
+            <option value="all">Todas as datas</option>
+            <option value="november">Confirmadas desde 01/11/2026</option>
+            <option value="unknown">Data ainda desconhecida</option>
+          </select>
+        </div>
+      </div>
+
+      @if (loading()) {
+        <div class="radar-empty" role="status">Carregando suas vagas…</div>
+      } @else {
+        <div class="results-list">
+          @for (job of filteredJobs(); track job.id) {
+            <article class="job-card">
+              <div class="job-top">
+                <div>
+                  <p class="job-source">{{ job.sourcePortal }} · {{ job.verificationState === 'verified' ? 'Verificada' : 'A revisar' }}</p>
+                  <h3>{{ job.title }}</h3>
+                  <p class="job-company">{{ job.company }}</p>
+                </div>
+                <span class="job-badge">{{ areaLabels[job.area] }}</span>
+              </div>
+              <div class="job-meta">
+                <span>{{ workLabels[job.workArrangement] }}</span>
+                @if (job.city) { <span>{{ job.city }}{{ job.state ? ' / ' + job.state : '' }}</span> }
+                <span>{{ formatDate(job.publishedAtUtc) }}</span>
+              </div>
+              @if (job.description) {
+                <p class="job-description">{{ job.description }}</p>
+              }
+              <div class="job-footer">
+                <span>Salva em {{ formatDate(job.firstSeenAtUtc) }}</span>
+                <a class="btn btn-outline" [href]="job.originalUrl" target="_blank" rel="noopener noreferrer">Abrir vaga original <span aria-hidden="true">↗</span></a>
+              </div>
+            </article>
+          } @empty {
+            <div class="radar-empty">
+              <h3>Nenhuma vaga encontrada</h3>
+              <p>Cadastre uma oportunidade ou altere os filtros. Não exibimos vagas fictícias para preencher a tela.</p>
+            </div>
+          }
+        </div>
+      }
+      <p class="help-text reminder">Abrir o anúncio <strong>não</strong> registra candidatura. Confirme empresa, prazo, requisitos e elegibilidade antes de enviar seus dados.</p>
+    </section>
+  </div>
+</main>

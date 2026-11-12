@@ -1,0 +1,54 @@
+.radar-page { padding-top: 48px; padding-bottom: 90px; }
+.radar-header { display: flex; gap: 24px; align-items: flex-start; justify-content: space-between; margin-bottom: 28px; }
+.radar-header h1 { font-size: clamp(2.2rem, 4.5vw, 3.7rem); margin: 8px 0 16px; }
+.radar-header p { max-width: 670px; color: var(--subtle); line-height: 1.65; }
+.radar-layout { display: grid; grid-template-columns: minmax(285px, .85fr) minmax(0, 1.35fr); gap: 24px; align-items: start; }
+.radar-form-card, .radar-filters, .job-card, .radar-empty { background: var(--surface-raised); border: 1px solid var(--border); border-radius: 16px; }
+.radar-form-card { padding: 26px; }
+.radar-form-card h2, .result-heading h2 { margin: 10px 0; letter-spacing: -.025em; }
+.help-text { color: var(--subtle); font-size: .83rem; line-height: 1.55; }
+.field { display: flex; flex-direction: column; gap: 7px; margin: 14px 0; min-width: 0; }
+.field label { font-size: .86rem; font-weight: 700; }
+.field input, .field select, .field textarea {
+  width: 100%; border: 1px solid #42617e; border-radius: 9px;
+  background: #0b1c33; color: var(--text); font: inherit;
+  padding: 11px 12px; min-height: 44px;
+}
+.field textarea { resize: vertical; min-height: 118px; }
+.field input::placeholder, .field textarea::placeholder { color: #9eb3c8; opacity: 1; }
+.field input:focus-visible, .field textarea:focus-visible, .field select:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.two-fields { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
+.check-field { display: flex; align-items: flex-start; gap: 10px; font-size: .86rem; line-height: 1.5; cursor: pointer; }
+.check-field input { width: 18px; height: 18px; flex: none; accent-color: var(--accent); }
+.submit-button { width: 100%; margin-top: 12px; cursor: pointer; }
+.submit-button:disabled { cursor: not-allowed; opacity: .6; }
+.result-heading { margin: 2px 0 20px; }
+.result-count { display: inline-grid; place-items: center; color: var(--accent); background: var(--surface-accent); font-size: .89rem; padding: 5px 10px; border-radius: 11px; vertical-align: middle; }
+.radar-filters { padding: 12px 22px; margin-bottom: 18px; }
+.radar-filters .field { margin: 10px 0; }
+.results-list { display: flex; flex-direction: column; gap: 14px; }
+.job-card { padding: 22px; }
+.job-top { display: flex; gap: 16px; justify-content: space-between; align-items: flex-start; }
+.job-top h3 { font-size: 1.12rem; margin: 6px 0; }
+.job-source { font-size: .75rem; color: var(--accent); margin: 0; }
+.job-company { color: var(--subtle); margin: 0; }
+.job-badge { background: var(--surface-accent); color: var(--accent); border-radius: 8px; font-size: .78rem; padding: 6px 10px; white-space: nowrap; }
+.job-meta { display: flex; flex-wrap: wrap; gap: 8px; margin: 18px 0; }
+.job-meta span { font-size: .78rem; border: 1px solid var(--border); border-radius: 8px; padding: 5px 8px; color: var(--subtle); }
+.job-description { color: var(--subtle); font-size: .87rem; line-height: 1.5; overflow: hidden; display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; white-space: pre-wrap; }
+.job-footer { display: flex; gap: 16px; flex-wrap: wrap; justify-content: space-between; align-items: center; }
+.job-footer > span { color: var(--subtle); font-size: .75rem; }
+.job-footer .btn { font-size: .84rem; padding: 9px 14px; }
+.radar-empty { text-align: center; padding: 44px 22px; color: var(--subtle); }
+.radar-empty h3 { color: var(--text); }
+.radar-alert { border: 1px solid; padding: 14px 18px; border-radius: 10px; margin: 14px 0; font-size: .9rem; }
+.radar-alert.error { border-color: #bc7777; background: #492b35; }
+.radar-alert.success { border-color: #3dc7a6; background: #16443d; }
+.reminder { margin-top: 18px; }
+@media (max-width: 920px) { .radar-layout { grid-template-columns: 1fr; } }
+@media (max-width: 640px) {
+ .radar-header { flex-direction: column; }
+ .radar-form-card { padding: 18px; }
+ .job-top { flex-wrap: wrap; }
+ .two-fields { grid-template-columns: 1fr; gap: 0; }
+}

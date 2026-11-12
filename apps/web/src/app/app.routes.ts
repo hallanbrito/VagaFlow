@@ -1,5 +1,6 @@
 import { Routes } from '@angular/router';
 import { DashboardComponent } from './dashboard.component';
+import { RadarComponent } from './radar.component';
 import { PlaceholderPageComponent } from './placeholder-page.component';
 
 export const routes: Routes = [
@@ -26,13 +27,8 @@ export const routes: Routes = [
   },
   {
     path: 'radar',
-    component: PlaceholderPageComponent,
-    title: 'Radar de vagas | VagaFlow',
-    data: {
-      heading: 'Radar de oportunidades',
-      description: 'A primeira versão permitirá colar texto e link de uma vaga, conferir os dados e filtrar oportunidades de Teresina e do trabalho remoto no Brasil.',
-      planned: 'Importação rápida + listagem de vagas — VF-010 e VF-013.'
-    }
+    component: RadarComponent,
+    title: 'Radar de vagas | VagaFlow'
   },
   {
     path: 'candidaturas',
