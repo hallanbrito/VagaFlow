@@ -1,0 +1,23 @@
+name: vagaflow
+
+services:
+  postgres:
+    image: postgres:17-alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: vagaflow
+      POSTGRES_USER: vagaflow
+      POSTGRES_PASSWORD: ${VAGAFLOW_DB_PASSWORD:?Defina VAGAFLOW_DB_PASSWORD em infra/.env}
+    ports:
+      - "127.0.0.1:${VAGAFLOW_DB_PORT:-55432}:5432"
+    volumes:
+      - vagaflow_pg_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U vagaflow -d vagaflow"]
+      interval: 5s
+      timeout: 3s
+      retries: 12
+      start_period: 10s
+
+volumes:
+  vagaflow_pg_data:
