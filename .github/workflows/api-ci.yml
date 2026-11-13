@@ -1,0 +1,33 @@
+name: API CI
+
+on:
+  pull_request:
+    paths:
+      - 'apps/api/**'
+      - '.github/workflows/api-ci.yml'
+      - 'scripts/smoke-api.sh'
+  push:
+    branches: [main]
+    paths:
+      - 'apps/api/**'
+      - '.github/workflows/api-ci.yml'
+      - 'scripts/smoke-api.sh'
+
+permissions:
+  contents: read
+
+jobs:
+  api-test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Set up .NET 10
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '10.0.x'
+      - name: Restore tests
+        run: dotnet restore apps/api/tests/VagaFlow.Api.Tests/VagaFlow.Api.Tests.csproj
+      - name: Build tests
+        run: dotnet build apps/api/tests/VagaFlow.Api.Tests/VagaFlow.Api.Tests.csproj --no-restore --configuration Release
+      - name: Run tests
+        run: dotnet test apps/api/tests/VagaFlow.Api.Tests/VagaFlow.Api.Tests.csproj --no-build --configuration Release --verbosity normal
